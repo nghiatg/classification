@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 
@@ -40,6 +41,13 @@ public class Utils {
 			pr.println(vocab[i]);
 		}
 		pr.close();
+	}
+	
+	public static void testDataSample() throws Exception { 
+		Dataset<Row> data = ML.spark.read().format("libsvm").load("E:\\study\\text\\data_sample.txt");
+		data.printSchema();
+		data.show();
+
 	}
 
 
