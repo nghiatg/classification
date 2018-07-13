@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -145,6 +146,28 @@ public class Utils {
 		
 	}
 	
+	public static String formatDouble(double d, int numberAfterComma) {
+		DecimalFormat df = new DecimalFormat("#");
+		df.setMaximumFractionDigits(numberAfterComma);
+		return (df.format(d)); 
+	}
+	
+	public static void splitFile(String input, double trainRatio, String trainPath, String testPath) throws Exception {
+		BufferedReader br = new BufferedReader(new FileReader(input));
+		PrintWriter prTrain = new PrintWriter(trainPath);
+		PrintWriter prTest = new PrintWriter(testPath);
+		String line = br.readLine();
+		HashMap<String,ArrayList<String>> count = new HashMap<String, ArrayList<String>>();
+		while(line != null) {
+			if(!count.containsKey(line.split("\t")[0])) {
+				count.put(line.split("\t")[0],new ArrayList<String>());
+			}
+			count.get(line.split("\t")[0]).add(line);
+			line = br.readLine();
+		}
+		
+		br.close();
+	}
 
 
 }

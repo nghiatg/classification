@@ -12,20 +12,21 @@ public class MP {
 	}
 	
 	public static void realMain() throws Exception { 
-//		Data.removeSw();
-//		Dataset<Row> rawDataIntoDataset = ML.createDataSet();
-//		Dataset<Row> afterCV = ML.cv(rawDataIntoDataset,"data//vocabulary");
-//		Dataset<Row> tfidf = ML.tfidf(afterCV);
-//		tfidf.cache();
-//		tfidf.printSchema();
-//		Data.writeDataForClassification(tfidf.select("label","tfidf"), "data//data_fc");
-//		Utils.shuffle("data//data_fc", "data//data_fc_shuffle");
+		Data.removeSw("data//datatrain_more_pped_changeLabel_limit.txt","data//data_nosw.txt");
+		Dataset<Row> rawDataIntoDataset = ML.createDataSet("data//data_nosw.txt");
+		Dataset<Row> afterCV = ML.cv(rawDataIntoDataset,"data//vocabulary");
+		Dataset<Row> tfidf = ML.tfidf(afterCV);
+		tfidf.cache();
+		tfidf.printSchema();
+		Data.writeDataForClassification(tfidf.select("label","tfidf"), "data//data_fc");
+		Utils.shuffle("data//data_fc", "data//data_fc_shuffle");
 		ML.NB("data//data_fc_shuffle");
-//		ML.oneVsRest();
+//		ML.oneVsRest("data//data_fc_shuffle");
 //		ML.mlp();
 //		Utils.changeLabel();
 //		Utils.getLackData();
 //		Data.getOtherSourceData();
+//		Data.limitData("data//datatrain_more_pped_changeLabel.txt", "data//datatrain_more_pped_changeLabel__limit.txt", 200);
 	}
 	public static void testMain() throws Exception { 
 		Utils.testDataSample();

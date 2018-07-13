@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.spark.sql.Dataset;
@@ -15,9 +16,9 @@ import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 public class Data {
-	public static HashSet<String> getSwList() throws Exception { 
+	public static HashSet<String> getSwList(String swPath) throws Exception { 
 		HashSet<String> rs = new HashSet<String>();
-		BufferedReader br = new BufferedReader(new FileReader("data//stopwords_connected.txt"));
+		BufferedReader br = new BufferedReader(new FileReader(swPath));
 		String line = br.readLine();
 		while(line != null) {
 			rs.add(line);
@@ -29,10 +30,10 @@ public class Data {
 	
 	
 	//filter non_letter and non-digit here
-	public static void removeSw() throws Exception { 
-		HashSet<String> swList = getSwList();
-		PrintWriter pr = new PrintWriter("data//data_nosw.txt");
-		BufferedReader br = new BufferedReader(new FileReader("data//datatrain_more_pped_changeLabel.txt"));
+	public static void removeSw(String input,String output) throws Exception { 
+		HashSet<String> swList = getSwList("data//stopwords_connected.txt");
+		PrintWriter pr = new PrintWriter(output);
+		BufferedReader br = new BufferedReader(new FileReader(input));
 		String line = br.readLine();
 		StringBuilder sb = new StringBuilder();
 		while(line != null) {
@@ -102,6 +103,31 @@ public class Data {
 			rs.add("http://cafef.vn"+ele.getElementsByTag("a").first().attr("href"));
 		}
 		return rs;
+	}
+	
+	public static void limitData(String input,String output, int limit) throws Exception { 
+		HashMap<String,Integer> numberOfOccurence = new HashMap<String, Integer>();
+		PrintWriter pr = new PrintWriter(output);
+		BufferedReader br = new BufferedReader(new FileReader(input));
+		String line = br.readLine();
+		while(line != null) {
+			if(!line.contains("\t")) {
+				line = br.readLine();
+				continue;
+			}
+			if(!numberOfOccurence.containsKey(line.split("\t")[0])) {
+				numberOfOccurence.put(line.split("\t")[0], 0);
+			}
+			if(numberOfOccurence.get(line.split("\t")[0]) >= limit) {
+				line = br.readLine();
+				continue;
+			}
+			numberOfOccurence.put(line.split("\t")[0], numberOfOccurence.get(line.split("\t")[0]) + 1);
+			pr.println(line);
+			line = br.readLine();
+		}
+		br.close();
+		pr.close();
 	}
 
 }
