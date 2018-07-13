@@ -17,7 +17,7 @@ import org.jsoup.select.Elements;
 public class Data {
 	public static HashSet<String> getSwList() throws Exception { 
 		HashSet<String> rs = new HashSet<String>();
-		BufferedReader br = new BufferedReader(new FileReader("stopwords_connected.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("data//stopwords_connected.txt"));
 		String line = br.readLine();
 		while(line != null) {
 			rs.add(line);
@@ -31,8 +31,8 @@ public class Data {
 	//filter non_letter and non-digit here
 	public static void removeSw() throws Exception { 
 		HashSet<String> swList = getSwList();
-		PrintWriter pr = new PrintWriter("data_nosw.txt");
-		BufferedReader br = new BufferedReader(new FileReader("datatrain_more_pped_changeLabel.txt"));
+		PrintWriter pr = new PrintWriter("data//data_nosw.txt");
+		BufferedReader br = new BufferedReader(new FileReader("data//datatrain_more_pped_changeLabel.txt"));
 		String line = br.readLine();
 		StringBuilder sb = new StringBuilder();
 		while(line != null) {

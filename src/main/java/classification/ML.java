@@ -51,7 +51,7 @@ public class ML {
 	
 	public static Dataset<Row> createDataSet() throws Exception {
 		ArrayList<Row> rows = new ArrayList<Row>();
-		BufferedReader br = new BufferedReader(new FileReader("data_nosw.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("data//data_nosw.txt"));
 		String line = br.readLine();
 		int id = 0;
 		while(line != null) {
@@ -71,7 +71,7 @@ public class ML {
 	
 	public static void oneVsRest() throws Exception { 
 		// load data file.
-		Dataset<Row> inputData = spark.read().format("libsvm").load("D:\\textfiles\\data_fc_shuffle");
+		Dataset<Row> inputData = spark.read().format("libsvm").load("data//data_fc_shuffle");
 
 		// generate the train/test split.
 		Dataset<Row>[] tmp = inputData.randomSplit(new double[]{0.6, 0.4});
@@ -102,9 +102,9 @@ public class ML {
 		System.out.println("Test Accuracy = " + accuracy);
 	}
 	
-	public static void NB() throws Exception { 
+	public static void NB(String inputFile) throws Exception { 
 		// Load training data
-		Dataset<Row> dataFrame = spark.read().format("libsvm").load("D:\\textfiles\\data_fc_shuffle");
+		Dataset<Row> dataFrame = spark.read().format("libsvm").load(inputFile);
 		// Split the data into train and test
 		Dataset<Row>[] splits = dataFrame.randomSplit(new double[]{0.6, 0.4}, 1234L);
 		Dataset<Row> train = splits[0];
@@ -130,7 +130,7 @@ public class ML {
 	}
 	
 	public static void mlp() throws Exception { 
-		Dataset<Row> dataFrame = spark.read().format("libsvm").load("D:\\textfiles\\data_fc_shuffle");
+		Dataset<Row> dataFrame = spark.read().format("libsvm").load("data//data_fc_shuffle");
 
 		// Split the data into train and test
 		Dataset<Row>[] splits = dataFrame.randomSplit(new double[]{0.7, 0.3}, 1234L);

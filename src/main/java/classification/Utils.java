@@ -48,7 +48,7 @@ public class Utils {
 	}
 	
 	public static void testDataSample() throws Exception { 
-		Dataset<Row> data = ML.spark.read().format("libsvm").load("E:\\study\\text\\data_sample.txt");
+		Dataset<Row> data = ML.spark.read().format("libsvm").load("data_sample.txt");
 		data.printSchema();
 		data.show();
 
@@ -77,7 +77,7 @@ public class Utils {
 	
 	public static int getVocabLength() throws Exception { 
 		int rs = 0;
-		BufferedReader br = new BufferedReader(new FileReader("vocabulary"));
+		BufferedReader br = new BufferedReader(new FileReader("data//vocabulary"));
 		String line = br.readLine();
 		while(line != null) {
 			rs++;
@@ -105,7 +105,7 @@ public class Utils {
 	}
 	
 	public static void changeLabel() throws Exception {
-		PrintWriter pr = new PrintWriter("datatrain_more_pped_changeLabel.txt");
+		PrintWriter pr = new PrintWriter("data//datatrain_more_pped_changeLabel.txt");
 		
 		//key : old, value : new
 		HashMap<Integer,Integer> labels = new HashMap<Integer,Integer>();
@@ -116,7 +116,7 @@ public class Utils {
 		}
 		labels.put(156,21);
 		labels.put(188,22);
-		BufferedReader br = new BufferedReader(new FileReader("D:\\Esclipse\\eclipse project\\elastic\\datatrain_more_pped.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("data//datatrain_more_pped.txt"));
 		String line  = br.readLine();
 		while(line != null) {
 			if(!line.contains("\t")) {
@@ -133,7 +133,7 @@ public class Utils {
 	}
 	
 	public static void getLackData() throws Exception {
-		BufferedReader br = new BufferedReader(new FileReader("D:\\Esclipse\\eclipse project\\classification\\datatrain_more_pped_changeLabel.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("data//datatrain_more_pped_changeLabel.txt"));
 		String line = br.readLine();
 		while(line != null) {
 			if(line.startsWith("1\t") || line.startsWith("14") || line.startsWith("21") || line.startsWith("18")) {

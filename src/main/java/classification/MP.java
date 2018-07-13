@@ -14,15 +14,14 @@ public class MP {
 	public static void realMain() throws Exception { 
 //		Data.removeSw();
 //		Dataset<Row> rawDataIntoDataset = ML.createDataSet();
-//		Dataset<Row> afterCV = ML.cv(rawDataIntoDataset,"vocabulary");
-//		
+//		Dataset<Row> afterCV = ML.cv(rawDataIntoDataset,"data//vocabulary");
 //		Dataset<Row> tfidf = ML.tfidf(afterCV);
 //		tfidf.cache();
 //		tfidf.printSchema();
-//		Data.writeDataForClassification(tfidf.select("label","tfidf"), "data_fc");
-//		Utils.shuffle("D:\\textfiles\\data_fc", "D:\\textfiles\\data_fc_shuffle");
+//		Data.writeDataForClassification(tfidf.select("label","tfidf"), "data//data_fc");
+//		Utils.shuffle("data//data_fc", "data//data_fc_shuffle");
+		ML.NB("data//data_fc_shuffle");
 //		ML.oneVsRest();
-		ML.NB();
 //		ML.mlp();
 //		Utils.changeLabel();
 //		Utils.getLackData();
