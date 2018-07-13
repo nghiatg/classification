@@ -3,7 +3,16 @@ package classification;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
+
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
 
 public class Data {
 	public static HashSet<String> getSwList() throws Exception { 
@@ -23,7 +32,7 @@ public class Data {
 	public static void removeSw() throws Exception { 
 		HashSet<String> swList = getSwList();
 		PrintWriter pr = new PrintWriter("data_nosw.txt");
-		BufferedReader br = new BufferedReader(new FileReader("datatrain_more_pped.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("datatrain_more_pped_changeLabel.txt"));
 		String line = br.readLine();
 		StringBuilder sb = new StringBuilder();
 		while(line != null) {
@@ -47,6 +56,52 @@ public class Data {
 		}
 		br.close();
 		pr.close();
+	}
+	
+	public static void writeDataForClassification(Dataset<Row> rows,String output) throws Exception { 
+		PrintWriter pr = new PrintWriter(output);
+		for(Row r : rows.collectAsList()) {
+			pr.println(Utils.changeRowToStrArr(r));
+		}
+		pr.close();
+	}
+	
+	public static ArrayList<String> getOtherSourceData() throws Exception{
+		ArrayList<String> rs = new ArrayList<String>();
+		for(int i = 2 ; i < 4 ; ++i) {
+			String url = "http://cafef.vn/nganh-hang-khong.html";
+			Document doc = Jsoup.connect(url).get();
+			for(String detailUrl : getOtherUrl(url)) {
+				if(getContent(detailUrl).length() > 20) {
+					System.out.println(getContent(detailUrl));
+				}
+			}
+			break;
+		}
+		return rs;
+	}
+	
+	public static String getContent(String url) throws Exception {
+		Whitelist wl = Whitelist.none();
+		Document doc = Jsoup.connect(url).get();
+		StringBuilder sb = new StringBuilder();
+		try{
+			Elements eles=  doc.getElementById("mainContent").getElementsByTag("p");
+			for(Element e: eles) {
+				sb.append(Jsoup.clean(e.toString(), wl));
+			}
+		}catch(Exception e) {}
+		return sb.toString();
+	}
+	
+	public static ArrayList<String> getOtherUrl(String url) throws Exception {
+		ArrayList<String> rs = new ArrayList<String>();
+		Document doc = Jsoup.connect(url).get();
+		Elements eles = doc.getElementsByClass("titlehidden");
+		for(Element ele : eles) {
+			rs.add("http://cafef.vn"+ele.getElementsByTag("a").first().attr("href"));
+		}
+		return rs;
 	}
 
 }
