@@ -129,5 +129,16 @@ public class Data {
 		br.close();
 		pr.close();
 	}
+	
+	public static String crawl(String url) throws Exception { 
+		StringBuilder sb = new StringBuilder();
+		Document doc = Jsoup.connect(url).get();
+		Elements pEles = doc.getElementsByTag("p");
+		Whitelist wl = Whitelist.none();
+		for(Element e : pEles) {
+			sb.append(Jsoup.clean(e.toString(), wl)).append(" ");
+		}
+		return sb.toString();
+	}
 
 }

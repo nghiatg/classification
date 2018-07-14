@@ -1,6 +1,7 @@
 package classification;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,12 +32,21 @@ public class Utils {
 		}
 	}
 	
-	public static Row changeStringToRow(String doc, int id,int label) throws IOException {
+	public static Row changeStringToRowWithLabel(int id,int label,String doc) throws IOException {
 		ArrayList<String> words = new ArrayList<String>();
 		for(String w : doc.split(" ")) {
 			words.add(w);
 		}
 		Row r = RowFactory.create(new Long(id),new Integer(label), words);
+		return r;
+	}
+	
+	public static Row changeStringToRowWithNoLabel(int id, String doc) throws IOException {
+		ArrayList<String> words = new ArrayList<String>();
+		for(String w : doc.split(" ")) {
+			words.add(w);
+		}
+		Row r = RowFactory.create(new Long(id), words);
 		return r;
 	}
 	
@@ -88,22 +98,22 @@ public class Utils {
 		return rs;
 	}
 	
-	public static void shuffle(String ip, String op) throws Exception { 
-		ArrayList<String> data = new ArrayList<String>();
-		BufferedReader br = new BufferedReader(new FileReader(ip));
-		String line = br.readLine();
-		while(line != null) {
-			data.add(line);
-			line = br.readLine();
-		}
-		br.close();
-		Collections.shuffle(data);
-		PrintWriter pr = new PrintWriter(op);
-		for(String s : data) {
-			pr.println(s);
-		}
-		pr.close();
-	}
+//	public static void shuffle(String ip, String op) throws Exception { 
+//		ArrayList<String> data = new ArrayList<String>();
+//		BufferedReader br = new BufferedReader(new FileReader(ip));
+//		String line = br.readLine();
+//		while(line != null) {
+//			data.add(line);
+//			line = br.readLine();
+//		}
+//		br.close();
+//		Collections.shuffle(data);
+//		PrintWriter pr = new PrintWriter(op);
+//		for(String s : data) {
+//			pr.println(s);
+//		}
+//		pr.close();
+//	}
 	
 	public static void changeLabel() throws Exception {
 		PrintWriter pr = new PrintWriter("data//datatrain_more_pped_changeLabel.txt");
@@ -167,6 +177,16 @@ public class Utils {
 		}
 		
 		br.close();
+	}
+	
+	public static void deleteDir(File file) {
+	    File[] contents = file.listFiles();
+	    if (contents != null) {
+	        for (File f : contents) {
+	            deleteDir(f);
+	        }
+	    }
+	    file.delete();
 	}
 
 

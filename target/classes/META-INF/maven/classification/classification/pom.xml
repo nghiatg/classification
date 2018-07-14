@@ -30,5 +30,16 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.11.2</version>
 		</dependency>
+		<dependency>
+			<groupId>vn.sentiment</groupId>
+			<artifactId>TPSegmenter</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>12</id>
+			<url> http://192.168.23.191:8081/nexus/content/repositories/12/</url>
+		</repository>
+	</repositories>
 </project>

@@ -32,6 +32,9 @@ import scala.Int;
 import scala.Tuple2;
 
 public class ML {
+	static String cvModelPath = "model/cvmodel";
+	static String idfModelPath = "model/idfmodel";
+	static String nbModelPath = "model/nbmodel";
 	static SparkSession spark = SparkSession.builder().appName("JavaPipelineExample").master("local[*]").getOrCreate();
 	static int vocabLength;
 	static {
@@ -46,6 +49,7 @@ public class ML {
 	public static Dataset<Row> cv(Dataset<Row> dataset, String vocabPath) throws Exception {
 		CountVectorizerModel cvModel = new CountVectorizer().setInputCol("raw").setOutputCol("tf").setMinDF(1)
 				.fit(dataset);
+		cvModel.save(cvModelPath);
 		Dataset<Row> afterCV = cvModel.transform(dataset);
 		Utils.writeVocab(cvModel.vocabulary(), vocabPath);
 		vocabLength = Utils.getVocabLength();
@@ -54,16 +58,17 @@ public class ML {
 
 	public static Dataset<Row> tfidf(Dataset<Row> afterCV) throws Exception {
 		IDFModel idfModel = new IDF().setInputCol("tf").setOutputCol("tfidf").fit(afterCV);
+		idfModel.save(idfModelPath);
 		return idfModel.transform(afterCV);
 	}
 
-	public static Dataset<Row> createDataSet(String input) throws Exception {
+	public static Dataset<Row> createDataSet(String inputFile) throws Exception {
 		ArrayList<Row> rows = new ArrayList<Row>();
-		BufferedReader br = new BufferedReader(new FileReader(input));
+		BufferedReader br = new BufferedReader(new FileReader(inputFile));
 		String line = br.readLine();
 		int id = 0;
 		while (line != null) {
-			rows.add(Utils.changeStringToRow(line.split("\t")[1], id, Integer.parseInt(line.split("\t")[0])));
+			rows.add(Utils.changeStringToRowWithLabel(id, Integer.parseInt(line.split("\t")[0]),line.split("\t")[1]));
 			id++;
 			line = br.readLine();
 		}
@@ -98,7 +103,6 @@ public class ML {
 		// score the model on test data.
 		Dataset<Row> predictions = ovrModel.transform(test).select("label", "prediction");
 		predictions.sort("label").show(10000);
-		// predictions.show(10000);
 
 		// obtain evaluator.
 		MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator().setMetricName("accuracy");
@@ -121,6 +125,7 @@ public class ML {
 
 		// train the model
 		NaiveBayesModel model = nb.fit(train);
+		model.save(nbModelPath);
 
 		// Select example rows to display.
 		Dataset<Row> predictions = model.transform(test);
@@ -185,5 +190,48 @@ public class ML {
 
 		System.out.println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels));
 	}
+	
+	public static CountVectorizerModel getCvModel() throws Exception { 
+		return CountVectorizerModel.load(cvModelPath);
+	}
+	public static IDFModel getIdfModel() throws Exception { 
+		return IDFModel.load(idfModelPath);
+	}
+
+	public static NaiveBayesModel getNbModel() throws Exception { 
+		return NaiveBayesModel.load(nbModelPath);
+	}
+	
+	public static void predictDocs(ArrayList<String> rawDocs) throws Exception { 
+		// preprocess docs
+		PreProcessing pp = new PreProcessing();
+		ArrayList<String> ppdocs = new ArrayList<String>();
+		for(String raw : rawDocs) {
+			ppdocs.add(pp.process(raw));
+		}
+		Dataset<Row> firstDataset = createDataset(ppdocs);
+		CountVectorizerModel cvModel = getCvModel();
+		IDFModel idfModel = getIdfModel();
+		NaiveBayesModel nbModel = getNbModel();
+		
+		
+		
+	}
+	
+	public static Dataset<Row> createDataset(ArrayList<String> docs) throws Exception { 
+		ArrayList<Row> rows = new ArrayList<Row>();
+		int id = 0;
+		for(String doc : docs) {
+			rows.add(Utils.changeStringToRowWithNoLabel(id,doc));
+			id++;
+		}
+		StructType schema = new StructType(new StructField[] {
+				new StructField("id", DataTypes.LongType, false, Metadata.empty()),
+				new StructField("raw", DataTypes.createArrayType(DataTypes.StringType), false, Metadata.empty()) });
+		Dataset<Row> dataset = spark.createDataFrame(rows, schema);
+		return dataset;
+	}
+	
+	
 
 }
