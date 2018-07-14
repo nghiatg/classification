@@ -140,5 +140,17 @@ public class Data {
 		}
 		return sb.toString();
 	}
+	
+	public static ArrayList<String> getTest() throws Exception { 
+		ArrayList<String> rs= new ArrayList<String>();
+		BufferedReader br = new BufferedReader(new FileReader("D:\\Esclipse\\eclipseproject\\classification\\data\\test2.txt"));
+		String line = br.readLine();
+		while(line != null) {
+			rs.add(line);
+			line = br.readLine();
+		}
+		br.close();
+		return rs;
+	}
 
 }

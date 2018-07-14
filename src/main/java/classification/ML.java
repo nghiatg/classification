@@ -57,7 +57,7 @@ public class ML {
 	}
 
 	public static Dataset<Row> tfidf(Dataset<Row> afterCV) throws Exception {
-		IDFModel idfModel = new IDF().setInputCol("tf").setOutputCol("tfidf").fit(afterCV);
+		IDFModel idfModel = new IDF().setInputCol("tf").setOutputCol("features").fit(afterCV);
 		idfModel.save(idfModelPath);
 		return idfModel.transform(afterCV);
 	}
@@ -213,9 +213,11 @@ public class ML {
 		CountVectorizerModel cvModel = getCvModel();
 		IDFModel idfModel = getIdfModel();
 		NaiveBayesModel nbModel = getNbModel();
+		Dataset<Row> afterTfidf = idfModel.transform(cvModel.transform(firstDataset));
 		
-		
-		
+		// TODO 
+		Dataset<Row> predictions = nbModel.transform(afterTfidf);
+		predictions.show(false);
 	}
 	
 	public static Dataset<Row> createDataset(ArrayList<String> docs) throws Exception { 

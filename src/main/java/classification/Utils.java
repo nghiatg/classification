@@ -59,7 +59,7 @@ public class Utils {
 	}
 	
 	public static void testDataSample() throws Exception { 
-		Dataset<Row> data = ML.spark.read().format("libsvm").load("data_sample.txt");
+		Dataset<Row> data = ML.spark.read().format("libsvm").load("data/data_sample.txt");
 		data.printSchema();
 		data.show();
 

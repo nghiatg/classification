@@ -9,8 +9,8 @@ public class MP {
 
 	public static void main(String[] args) throws Exception {
 		ML.spark.sparkContext().setLogLevel("ERROR");
-		realMain();
-//		testMain();
+//		realMain();
+		testMain();
 	}
 	
 	public static void realMain() throws Exception { 
@@ -23,10 +23,9 @@ public class MP {
 		Dataset<Row> tfidf = ML.tfidf(afterCV);
 		tfidf.cache();
 		tfidf.printSchema();
-		Data.writeDataForClassification(tfidf.select("label","tfidf"), "data//data_fc");
-//		Utils.shuffle("data//data_fc", "data//data_fc_shuffle");
+		Data.writeDataForClassification(tfidf.select("label","features"), "data//data_fc");
 		ML.NB("data//data_fc");
-//		ML.oneVsRest("data//data_fc_shuffle");
+//		ML.oneVsRest("data//data_fc");
 //		ML.mlp();
 //		Utils.changeLabel();
 //		Utils.getLackData();
@@ -34,7 +33,10 @@ public class MP {
 //		Data.limitData("data//datatrain_more_pped_changeLabel.txt", "data//datatrain_more_pped_changeLabel__limit.txt", 200);
 	}
 	public static void testMain() throws Exception { 
-		Utils.testDataSample();
+//		Utils.testDataSample();
+		
+//		ArrayLList<>
+		ML.predictDocs(Data.getTest());
 	}
 	
 
